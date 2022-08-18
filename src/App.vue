@@ -1,16 +1,8 @@
 <template>
   <div>
-    <div class="post">
-      <div><strong>Название:</strong> Пост о JavaScript</div>
-      <div><strong>Описание:</strong> JavaScript универсальный язык программирования</div>
-    </div>
-    <div class="post">
-      <div><strong>Название:</strong> Пост о JavaScript</div>
-      <div><strong>Описание:</strong> JavaScript универсальный язык программирования</div>
-    </div>
-    <div class="post">
-      <div><strong>Название:</strong> Пост о JavaScript</div>
-      <div><strong>Описание:</strong> JavaScript универсальный язык программирования</div>
+    <div class="post" v-bind:key="post.id" v-for="post in posts">
+      <div><strong>Название:</strong> {{ post.title }}</div>
+      <div><strong>Описание:</strong> {{ post.body }}</div>
     </div>
   </div>
 </template>
@@ -19,17 +11,16 @@
   export default {
     data() {
       return {
-        likes: 0,
-        dislikes: 0,
+        posts: [
+          {id: 1, title: 'JavaScript 1', body: 'Описание поста 1'},
+          {id: 2, title: 'JavaScript 2', body: 'Описание поста 2'},
+          {id: 3, title: 'JavaScript 3', body: 'Описание поста 3'},
+          {id: 4, title: 'JavaScript 4', body: 'Описание поста 4'},
+        ]
       }
     },
     methods: {
-      addLikes() {
-        this.likes += 1;
-      },
-      addDislike() {
-        this.dislikes += 1;
-      }
+
     }
   }
 </script>
