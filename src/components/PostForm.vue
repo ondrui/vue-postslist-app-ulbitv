@@ -40,7 +40,6 @@ export default {
       };
     },
   },
-  components: { MyButton, MyInput },
 };
 </script>
 

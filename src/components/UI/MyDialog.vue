@@ -21,7 +21,8 @@ export default {
   },
   methods: {
     hideDialog() {
-      this.$emit('update:show', false)
+      this.$emit('update:show', false);
+      document.body.style.overflow = "";
     }
   }
 }
