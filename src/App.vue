@@ -26,11 +26,12 @@
       v-if="!isPostsLoading"
     />
     <div v-else>Идет загрузка...</div>
-    <PostPagination
+    <div ref="observer" class="observer"></div>
+    <!-- <PostPagination
       @change-page="changePage"
       :page="page"
       :totalPages="totalPages"
-    />
+    /> -->
   </div>
 </template>
 
@@ -38,13 +39,13 @@
 import axios from 'axios';
 import PostList from '@/components/PostList';
 import PostForm from '@/components/PostForm';
-import PostPagination from '@/components/PostPagination.vue';
+//import PostPagination from '@/components/PostPagination.vue';
 
 export default {
   components: {
     PostForm,
     PostList,
-    PostPagination
+    // PostPagination
   },
   data() {
     return {
@@ -77,9 +78,9 @@ export default {
       document.body.style.overflow = 'hidden';
       this.dialogVisible = true;
     },
-    changePage(pageNumber) {
-      this.page = pageNumber;
-    },
+    // changePage(pageNumber) {
+    //   this.page = pageNumber;
+    // },
     async fetchPosts() {
       try {
         this.isPostsLoading = true;
@@ -97,9 +98,35 @@ export default {
         this.isPostsLoading = false;
       }
     },
+    async loadMorePosts() {
+      try {
+        this.page += 1;
+        const response = await axios.get('https://jsonplaceholder.typicode.com/posts', {
+          params: {
+            _page: this.page,
+            _limit: this.limit
+          }
+        });
+        this.totalPages = Math.ceil(response.headers['x-total-count'] / this.limit);
+        this.posts = [...this.posts, ...response.data];
+      } catch (e) {
+        alert('Ошибка! ');
+      }
+    },
   },
   mounted() {
     this.fetchPosts();
+    const options = {
+    rootMargin: '0px',
+    threshold: 1.0
+    }
+    const callback = (entries, observer) => {
+      if (entries[0].isIntersecting && this.page < this.totalPages) {
+        this.loadMorePosts();
+      }
+    };
+    const observer = new IntersectionObserver(callback, options);
+    observer.observe(this.$refs.observer);
   },
   computed: {
     sortedPosts() {
@@ -110,9 +137,9 @@ export default {
     }
   },
   watch: {
-    page() {
-      this.fetchPosts();
-    }
+    // page() {
+    //   this.fetchPosts();
+    // }
     // selectedSort(newValue) {
     //   this.posts.sort((post1, post2) => {
     //     return post1[newValue]?.localeCompare(post2[newValue]);
@@ -138,5 +165,10 @@ export default {
   margin: 15px 0;
   display: flex;
   justify-content: space-between;
+}
+
+.observer {
+  height: 30px;
+  /* background-color: green; */
 }
 </style>
