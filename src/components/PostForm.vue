@@ -18,9 +18,6 @@
 </template>
 
 <script>
-import MyButton from '@/components/UI/MyButton';
-import MyInput from './UI/MyInput.vue';
-
 export default {
   data() {
     return {

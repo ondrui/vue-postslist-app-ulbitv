@@ -1,6 +1,10 @@
 <template>
   <div class="app">
     <h1>Страница с постами</h1>
+    <MyInput
+      v-model="searchQuery"
+      placeholder="Поиск.."
+    />
     <div class="app__btns">
       <MyButton
         @click="showDialog"
@@ -17,11 +21,24 @@
       <PostForm @create="createPost" />
     </MyDialog>
     <PostList
-      :posts="sortedPosts"
+      :posts="sortedAndSearchedPosts"
       @remove="removePost"
       v-if="!isPostsLoading"
     />
     <div v-else>Идет загрузка...</div>
+    <div class="page__wrapper">
+      <div
+        v-for="pageNumber in totalPages"
+        :key="pageNumber"
+        class="page"
+        :class="{
+          'current-page': page === pageNumber
+        }"
+        @click="changePage(pageNumber)"
+      >
+        {{ pageNumber }}
+      </div>
+    </div>
   </div>
 </template>
 
@@ -42,6 +59,10 @@ export default {
       modificatorValue: '',
       isPostsLoading: false,
       selectedSort: '',
+      searchQuery: '',
+      page: 1,
+      limit: 10,
+      totalPages: 0,
       sortOptions: [
         {value: 'title', name: 'По названию'},
         {value: 'body', name: 'По содержимому'}
@@ -62,10 +83,19 @@ export default {
       document.body.style.overflow = 'hidden';
       this.dialogVisible = true;
     },
+    changePage(pageNumber) {
+      this.page = pageNumber;
+    },
     async fetchPosts() {
       try {
         this.isPostsLoading = true;
-        const response = await axios.get('https://jsonplaceholder.typicode.com/posts?_limit=10');
+        const response = await axios.get('https://jsonplaceholder.typicode.com/posts', {
+          params: {
+            _page: this.page,
+            _limit: this.limit
+          }
+        });
+        this.totalPages = Math.ceil(response.headers['x-total-count'] / this.limit);
         this.posts = response.data;
       } catch (e) {
         alert('Ошибка! ');
@@ -80,9 +110,15 @@ export default {
   computed: {
     sortedPosts() {
       return [...this.posts].sort((post1, post2) => post1[this.selectedSort]?.localeCompare(post2[this.selectedSort]));
+    },
+    sortedAndSearchedPosts() {
+      return this.sortedPosts.filter(post => post.title.toLowerCase().includes(this.searchQuery.toLowerCase()))
     }
   },
   watch: {
+    page() {
+      this.fetchPosts();
+    }
     // selectedSort(newValue) {
     //   this.posts.sort((post1, post2) => {
     //     return post1[newValue]?.localeCompare(post2[newValue]);
@@ -108,5 +144,23 @@ export default {
   margin: 15px 0;
   display: flex;
   justify-content: space-between;
+}
+
+.page__wrapper {
+  display: flex;
+  margin-top: 15px;
+  gap: 5px;
+}
+
+.page {
+  border: 2px solid teal;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.current-page {
+  border: 3px solid rgb(1, 62, 62);
+  background-color: rgb(210, 207, 207);
+  font-weight: bold;
 }
 </style>
