@@ -26,19 +26,11 @@
       v-if="!isPostsLoading"
     />
     <div v-else>Идет загрузка...</div>
-    <div class="page__wrapper">
-      <div
-        v-for="pageNumber in totalPages"
-        :key="pageNumber"
-        class="page"
-        :class="{
-          'current-page': page === pageNumber
-        }"
-        @click="changePage(pageNumber)"
-      >
-        {{ pageNumber }}
-      </div>
-    </div>
+    <PostPagination
+      @change-page="changePage"
+      :page="page"
+      :totalPages="totalPages"
+    />
   </div>
 </template>
 
@@ -46,11 +38,13 @@
 import axios from 'axios';
 import PostList from '@/components/PostList';
 import PostForm from '@/components/PostForm';
+import PostPagination from '@/components/PostPagination.vue';
 
 export default {
   components: {
     PostForm,
     PostList,
+    PostPagination
   },
   data() {
     return {
@@ -144,23 +138,5 @@ export default {
   margin: 15px 0;
   display: flex;
   justify-content: space-between;
-}
-
-.page__wrapper {
-  display: flex;
-  margin-top: 15px;
-  gap: 5px;
-}
-
-.page {
-  border: 2px solid teal;
-  padding: 10px;
-  border-radius: 5px;
-}
-
-.current-page {
-  border: 3px solid rgb(1, 62, 62);
-  background-color: rgb(210, 207, 207);
-  font-weight: bold;
 }
 </style>
