@@ -7,9 +7,13 @@
       Vue 3
     </div>
     <div class="navbar__btns">
-      <MyButton @click="$router.push('/posts')">Посты</MyButton>
       <MyButton
-      @click="$router.push('/about')"
+        @click="$router.push('/posts')"
+      >
+        Посты
+      </MyButton>
+      <MyButton
+        @click="$router.push('/about')"
         style="margin-left: 20px"
       >
         О сайте
