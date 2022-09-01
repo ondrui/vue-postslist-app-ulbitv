@@ -18,6 +18,12 @@
       >
         О сайте
       </MyButton>
+      <MyButton
+        @click="$router.push('/store')"
+        style="margin-left: 20px"
+      >
+        store
+      </MyButton>
     </div>
   </div>
 </template>
