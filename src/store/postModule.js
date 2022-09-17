@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from "axios";
 
 export const postModule = {
   state: () => ({
@@ -16,7 +16,7 @@ export const postModule = {
   }),
   getters: {
     sortedPosts(state) {
-      return [state.posts].sort((post1, post2) =>
+      return [...state.posts].sort((post1, post2) =>
         post1[state.selectedSort]?.localeCompare(post2[state.selectedSort])
       );
     },
@@ -37,7 +37,7 @@ export const postModule = {
       state.page = page;
     },
     setSelectedSort(state, selectedSort) {
-      state.selecteselectedSort = selectedSort;
+      state.selectedSort = selectedSort;
     },
     setTotalPages(state, totalPages) {
       state.totalPages = totalPages;
@@ -65,7 +65,7 @@ export const postModule = {
         );
         commit("setPosts", response.data);
       } catch (e) {
-        alert("Ошибка! ");
+        console.log(e);
       } finally {
         commit("setLoading", false);
       }
@@ -82,11 +82,15 @@ export const postModule = {
             },
           }
         );
-        commit("setTotalPages", Math.ceil(response.headers["x-total-count"] / state.limit));
+        commit(
+          "setTotalPages",
+          Math.ceil(response.headers["x-total-count"] / state.limit)
+        );
         commit("setPosts", [...state.posts, ...response.data]);
       } catch (e) {
-        alert("Ошибка! ");
+        console.log(e);
       }
     },
   },
+  namespaced: true,
 };

@@ -1,15 +1,19 @@
 <template>
   <div>
-    <h1>{{ $store.state.post.limit }}</h1>
-    <!-- <h1>Страница с постами</h1>
+    <h1>Страница с постами</h1>
     <MyInput
       v-focus
-      v-model="searchQuery"
+      :model-value="searchQuery"
+      @update:model-value="setSearchQuery"
       placeholder="Поиск.."
     />
     <div class="app__btns">
       <MyButton @click="showDialog"> Создать пост </MyButton>
-      <MySelect v-model="selectedSort" :options="sortOptions" />
+      <MySelect
+        :model-value="selectedSort"
+        @update:model-value="setSelectedSort"
+        :options="sortOptions"
+      />
     </div>
 
     <MyDialog v-model:show="dialogVisible">
@@ -20,8 +24,8 @@
       @remove="removePost"
       v-if="!isPostsLoading"
     />
-    <div v-else>Идет загрузка...</div> -->
-    <!-- <div v-intersection="loadMorePosts" class="observer"></div> -->
+    <div v-else>Идет загрузка...</div>
+    <div v-intersection="loadMorePosts" class="observer"></div>
     <!-- <PostPagination
       @change-page="changePage"
       :page="page"
@@ -31,9 +35,10 @@
 </template>
 
 <script>
-import PostList from '@/components/PostList';
-import PostForm from '@/components/PostForm';
+import PostList from "@/components/PostList";
+import PostForm from "@/components/PostForm";
 //import PostPagination from '@/components/PostPagination.vue';
+import { mapActions, mapGetters, mapMutations, mapState } from "vuex";
 
 export default {
   components: {
@@ -43,65 +48,53 @@ export default {
   },
   data() {
     return {
-      posts: [],
       dialogVisible: false,
-      modificatorValue: '',
-      isPostsLoading: false,
-      selectedSort: '',
-      searchQuery: '',
-      page: 1,
-      limit: 10,
-      totalPages: 0,
-      sortOptions: [
-        { value: 'title', name: 'По названию' },
-        { value: 'body', name: 'По содержимому' },
-      ],
     };
   },
   methods: {
+    ...mapMutations({
+      setPage: "post/setPage",
+      setSearchQuery: "post/setSearchQuery",
+      setSelectedSort: "post/setSelectedSort"
+    }),
+    ...mapActions({
+      loadMorePosts: "post/loadMorePosts",
+      fetchPosts: "post/fetchPosts",
+    }),
     createPost(post) {
       this.posts.push(post);
       this.dialogVisible = false;
-      document.body.style.overflow = '';
+      document.body.style.overflow = "";
     },
     removePost(post) {
       //this.posts = this.posts.filter(p => p.id !== post.id)
       this.posts.splice(this.posts.indexOf(post), 1);
     },
     showDialog() {
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = "hidden";
       this.dialogVisible = true;
     },
-    // changePage(pageNumber) {
-    //   this.page = pageNumber;
-    // },
   },
   mounted() {
-    //this.fetchPosts();
-    // const options = {
-    //   rootMargin: '0px',
-    //   threshold: 1.0,
-    // };
-    // const callback = (entries, observer) => {
-    //   if (entries[0].isIntersecting && this.page < this.totalPages) {
-    //     this.loadMorePosts();
-    //   }
-    // };
-    // const observer = new IntersectionObserver(callback, options);
-    // observer.observe(this.$refs.observer);
+    this.fetchPosts();
   },
   computed: {
-
+    ...mapState({
+      posts: state => state.post.posts,
+      isPostsLoading: state => state.post.isPostsLoading,
+      selectedSort: state => state.post.selectedSort,
+      searchQuery: state => state.post.searchQuery,
+      page: state => state.post.page,
+      limit: state => state.post.limit,
+      totalPages: state => state.post.totalPages,
+      sortOptions: state => state.post.sortOptions,
+    }),
+    ...mapGetters({
+      sortedPosts: "post/sortedPosts",
+      sortedAndSearchedPosts: "post/sortedAndSearchedPosts",
+    }),
   },
   watch: {
-    // page() {
-    //   this.fetchPosts();
-    // }
-    // selectedSort(newValue) {
-    //   this.posts.sort((post1, post2) => {
-    //     return post1[newValue]?.localeCompare(post2[newValue]);
-    //   });
-    // },
   },
 };
 </script>
