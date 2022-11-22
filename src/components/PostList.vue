@@ -7,6 +7,7 @@
         v-for="post in posts"
         :post="post"
         @remove="$emit('remove', post)"
+        :id="`new-${post.id}`"
       />
     </TransitionGroup>
   </div>

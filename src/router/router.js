@@ -1,34 +1,34 @@
-import { createRouter, createWebHistory } from 'vue-router';
-import Main from '../pages/Main';
-import PostsPage from '../pages/PostsPage';
-import About from '../pages/About';
-import PostIdPage from '../components/PostIdPage';
-import PostPageWithStore from '../pages/PostsPageWithStore';
-import PostPageCompositionApi from '../pages/PostsPageCompositionApi';
+import { createRouter, createWebHistory } from "vue-router";
+import Main from "../pages/Main";
+import PostsPage from "../pages/PostsPage";
+import About from "../pages/About";
+import PostIdPage from "../components/PostIdPage";
+import PostPageWithStore from "../pages/PostsPageWithStore";
+import PostPageCompositionApi from "../pages/PostsPageCompositionApi";
 
 const routes = [
   {
-    path: '/',
+    path: "/",
     component: Main,
   },
   {
-    path: '/posts',
+    path: "/posts",
     component: PostsPage,
   },
   {
-    path: '/about',
+    path: "/about",
     component: About,
   },
   {
-    path: '/posts/:id',
+    path: "/posts/:id",
     component: PostIdPage,
   },
   {
-    path: '/store',
+    path: "/store",
     component: PostPageWithStore,
   },
   {
-    path: '/composition',
+    path: "/composition",
     component: PostPageCompositionApi,
   },
 ];
@@ -36,6 +36,21 @@ const routes = [
 const router = createRouter({
   routes,
   history: createWebHistory(process.env.BASE_URL),
+  scrollBehavior(to, from, savedPosition) {
+    console.log("to: ", to, "from: ", from, "savedPosition: ", savedPosition);
+    if (to.hash) {
+      return {
+        el: to.hash,
+        top: 400,
+        behavior: "smooth",
+      };
+    }
+    if (savedPosition) {
+      return savedPosition
+    } else {
+      return { top: 0 }
+    }
+  },
 });
 
 export default router;
