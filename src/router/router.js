@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from "vue-router";
+import { createRouter, createWebHistory, createWebHashHistory } from "vue-router";
 import Main from "../pages/Main";
 import PostsPage from "../pages/PostsPage";
 import About from "../pages/About";
@@ -36,12 +36,13 @@ const routes = [
 const router = createRouter({
   routes,
   history: createWebHistory(process.env.BASE_URL),
+  // history: createWebHashHistory(),
   scrollBehavior(to, from, savedPosition) {
     console.log("to: ", to, "from: ", from, "savedPosition: ", savedPosition);
     if (to.hash) {
       return {
         el: to.hash,
-        top: 400,
+        top: 0,
         behavior: "smooth",
       };
     }
